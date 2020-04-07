@@ -24,6 +24,7 @@ import com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata;
 import com.ibm.cloud.objectstorage.services.s3.model.S3ObjectSummary;
 import com.ibm.cloud.objectstorage.oauth.BasicIBMOAuthCredentials;
 import com.ibm.cloud.objectstorage.services.s3.model.Region;
+import com.ibm.cloud.objectstorage.services.s3.model.S3Object;
 
 public class CosExample {
 
@@ -93,6 +94,7 @@ public class CosExample {
 		System.out.println("Listing objects in bucket " + bucketName);
 		ObjectListing objectListing = cosClient.listObjects(new ListObjectsRequest().withBucketName(bucketName));
 		for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+			
 			System.out.println(" - " + objectSummary.getKey() + "  " + "(size = " + objectSummary.getSize() + ")");
 		}
 		System.out.println();
@@ -139,6 +141,8 @@ public class CosExample {
 		for (final Bucket bucket : bucketList) {
 			System.out.println(bucket.getName());
 		}
+		
+		
 		System.out.println();
 	}
 
