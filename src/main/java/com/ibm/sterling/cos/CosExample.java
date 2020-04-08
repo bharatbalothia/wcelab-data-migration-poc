@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Random;
 
 import com.ibm.cloud.objectstorage.ClientConfiguration;
 import com.ibm.cloud.objectstorage.SDKGlobalConfiguration;
@@ -55,7 +56,15 @@ public class CosExample {
 		//listBuckets(_cosClient);
 
 		try {
-			writeObject(newBucketName, _cosClient, "secondObject");
+			String keyName = "object_no_";
+			for (int i = 0; i < 200; i++) {
+				String objName = keyName+i;
+				System.out.println("ObjectName:"+objName);
+				
+				writeObject(newBucketName, _cosClient, objName);
+				
+			}
+			
 			System.out.println("Done writing..");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -113,13 +122,11 @@ public class CosExample {
 	}
 
 	public static void writeObject(String bucketName, AmazonS3 cosClient, String objName) throws IOException {
-		String obj = "An example"; // the object to be stored
+		String obj = getRandomString(); // the object to be stored
 		ByteArrayOutputStream theBytes = new ByteArrayOutputStream(); // create a new output stream to store the object
-																		// data
-		ObjectOutputStream serializer = new ObjectOutputStream(theBytes); // set the object data to be serialized
-		serializer.writeObject(obj); // serialize the object data
-		serializer.flush();
-		serializer.close();
+				
+		theBytes.write(obj.getBytes());// data
+		
 		InputStream stream = new ByteArrayInputStream(theBytes.toByteArray()); // convert the serialized data to a new
 																				// input stream to store
 		ObjectMetadata metadata = new ObjectMetadata(); // define the metadata
@@ -146,4 +153,19 @@ public class CosExample {
 		System.out.println();
 	}
 
+	
+	public static String getRandomString() {
+		int leftLimit = 48; // numeral '0'
+	    int rightLimit = 122; // letter 'z'
+	    int targetStringLength = 50;
+	    Random random = new Random();
+	 
+	    String generatedString = random.ints(leftLimit, rightLimit + 1)
+	      .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+	      .limit(targetStringLength)
+	      .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+	      .toString();
+	    System.out.println("Random String:"+generatedString);
+	    return generatedString;
+	}
 }

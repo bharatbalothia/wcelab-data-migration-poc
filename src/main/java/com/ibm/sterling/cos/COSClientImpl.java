@@ -66,8 +66,26 @@ public class COSClientImpl implements COSClient {
 		this.apiKey = apiKey;
 	}
 
-	@Override
+	
 	public List<String> listObjects(String bucketName, int numOfObjects) {
+		
+		List<String> keyList = new ArrayList<String>();
+		
+		String nextToken = "";
+		ListObjectsV2Request request = new ListObjectsV2Request().withBucketName(bucketName)
+				.withMaxKeys(numOfObjects).withContinuationToken(nextToken);
+		ListObjectsV2Result result = getCosClient().listObjectsV2(request);
+		for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
+			keyList.add(objectSummary.getKey());
+		}
+		
+
+		return keyList;
+	}
+	
+	
+	
+	public List<String> listObjects1(String bucketName, int numOfObjects) {
 		
 		List<String> keyList = new ArrayList<String>();
 		boolean moreResults = true;
@@ -162,6 +180,20 @@ public class COSClientImpl implements COSClient {
 	public void moveObject(String bucketName, String keyName, String toBucket, String toKeyName) {
 		this.copyObject(bucketName, keyName, toBucket, toKeyName);
 		this.deleteObject(bucketName, keyName);
+	}
+	
+	public static void main(String[] args) {
+		COSClient cosClient = new COSClientImpl();
+		cosClient.setApiKey("xfUjUq-KczSK__JF-GwrDR71EB2GzVdYwT8W4vtfycRG");
+		cosClient.setServiceResourceId("crn:v1:bluemix:public:cloud-object-storage:global:a/33c5711b8afbf7fd809a4529de35532a:1859fde0-b540-43bd-b7ea-22ed80991835::");
+		cosClient.setEndpointURL("s3.us-east.cloud-object-storage.appdomain.cloud");
+		cosClient.setLocation("us");
+		
+		List<String> keyLst = cosClient.listObjects("oms-migration", 20);
+		for (String string : keyLst) {
+			System.out.println("keyName:"+string);
+		}
+		
 	}
 
 
