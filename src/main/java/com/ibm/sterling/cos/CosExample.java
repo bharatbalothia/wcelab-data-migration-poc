@@ -36,7 +36,7 @@ public class CosExample {
 
 		//String bucketName = "orderdash-donotdelete-pr-p0hrpkzixacuzi"; // eg my-unique-bucket-name
 		String newBucketName = "oms-migration"; // eg my-other-unique-bucket-name
-		String api_key = "xfUjUq-KczSK__JF-GwrDR71EB2GzVdYwT8W4vtfycRG"; // eg
+		String api_key = ""; // eg
 																			// "W00YiRnLW4k3fTjMB-oiB-2ySfTrFBIQQWanc--P3byk"
 		String service_instance_id = "crn:v1:bluemix:public:cloud-object-storage:global:a/33c5711b8afbf7fd809a4529de35532a:1859fde0-b540-43bd-b7ea-22ed80991835::";
 		String endpoint_url = "s3.us-east.cloud-object-storage.appdomain.cloud"; // this could be any service
