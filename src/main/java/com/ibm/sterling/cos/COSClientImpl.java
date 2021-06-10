@@ -39,9 +39,9 @@ public class COSClientImpl implements COSClient {
 
 	public COSClientImpl() {
 		SDKGlobalConfiguration.IAM_ENDPOINT = "https://iam.cloud.ibm.com/identity/token";
-		
+
 	}
-	
+
 	public void init() {
 		this._cosClient = createClient();
 	}
@@ -66,27 +66,23 @@ public class COSClientImpl implements COSClient {
 		this.apiKey = apiKey;
 	}
 
-	
 	public List<String> listObjects(String bucketName, int numOfObjects) {
-		
+
 		List<String> keyList = new ArrayList<String>();
-		
+
 		String nextToken = "";
-		ListObjectsV2Request request = new ListObjectsV2Request().withBucketName(bucketName)
-				.withMaxKeys(numOfObjects).withContinuationToken(nextToken);
+		ListObjectsV2Request request = new ListObjectsV2Request().withBucketName(bucketName).withMaxKeys(numOfObjects)
+				.withContinuationToken(nextToken);
 		ListObjectsV2Result result = getCosClient().listObjectsV2(request);
 		for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
 			keyList.add(objectSummary.getKey());
 		}
-		
 
 		return keyList;
 	}
-	
-	
-	
+
 	public List<String> listObjects1(String bucketName, int numOfObjects) {
-		
+
 		List<String> keyList = new ArrayList<String>();
 		boolean moreResults = true;
 		String nextToken = "";
@@ -110,7 +106,7 @@ public class COSClientImpl implements COSClient {
 	}
 
 	private AmazonS3 getCosClient() {
-		if(null == this._cosClient) {
+		if (null == this._cosClient) {
 			this.init();
 		}
 		return _cosClient;
@@ -137,21 +133,21 @@ public class COSClientImpl implements COSClient {
 	}
 
 	private AmazonS3 createClient() {
-		if(StringUtils.isBlank(apiKey)) {
+		if (StringUtils.isBlank(apiKey)) {
 			throw new IllegalStateException("API Key is not set..");
 		}
-		if(StringUtils.isBlank(this.serviceResourceId)) {
+		if (StringUtils.isBlank(this.serviceResourceId)) {
 			throw new IllegalStateException("Service Resorce ID is not set..");
 		}
-		
-		if(StringUtils.isBlank(this.getEndpointURL())) {
+
+		if (StringUtils.isBlank(this.getEndpointURL())) {
 			throw new IllegalStateException("Endpoint URL is not set..");
 		}
-		
-		if(StringUtils.isBlank(this.getLocation())) {
+
+		if (StringUtils.isBlank(this.getLocation())) {
 			throw new IllegalStateException("Location is not set..");
 		}
-		
+
 		AWSCredentials credentials;
 		credentials = new BasicIBMOAuthCredentials(this.apiKey, this.serviceResourceId);
 
@@ -165,36 +161,46 @@ public class COSClientImpl implements COSClient {
 		return cosClient;
 	}
 
-	
-	public void copyObject(String fromBucket, String keyName, String toBucket,  String toKeyName) {
+	public void copyObject(String fromBucket, String keyName, String toBucket, String toKeyName) {
 		this.getCosClient().copyObject(fromBucket, keyName, toBucket, toKeyName);
-		
+
 	}
 
-	
 	public void deleteObject(String bucketName, String keyName) {
 		this.getCosClient().deleteObject(bucketName, keyName);
-		
+
 	}
-	
+
 	public void moveObject(String bucketName, String keyName, String toBucket, String toKeyName) {
 		this.copyObject(bucketName, keyName, toBucket, toKeyName);
 		this.deleteObject(bucketName, keyName);
 	}
-	
+
 	public static void main(String[] args) {
 		COSClient cosClient = new COSClientImpl();
-		cosClient.setApiKey("xfUjUq-KczSK__JF-GwrDR71EB2GzVdYwT8W4vtfycRG");
-		cosClient.setServiceResourceId("crn:v1:bluemix:public:cloud-object-storage:global:a/33c5711b8afbf7fd809a4529de35532a:1859fde0-b540-43bd-b7ea-22ed80991835::");
-		cosClient.setEndpointURL("s3.us-east.cloud-object-storage.appdomain.cloud");
-		cosClient.setLocation("us");
-		
-		List<String> keyLst = cosClient.listObjects("oms-migration", 20);
-		for (String string : keyLst) {
-			System.out.println("keyName:"+string);
+		try {
+			cosClient.setApiKey("lrZ9WXXe2yTvcZlw9v6VBHMvjJEPv8xgI4zhMJ1RoDE_");
+			cosClient.setServiceResourceId(
+					"crn:v1:bluemix:public:cloud-object-storage:global:a/33c5711b8afbf7fd809a4529de35532a:1859fde0-b540-43bd-b7ea-22ed80991835::");
+			cosClient.setEndpointURL("s3.us-east.cloud-object-storage.appdomain.cloud");
+			cosClient.setLocation("us-standard");
+
+			List<String> keyLst = cosClient.listObjects("iv-event-subscription-brooks", 20);
+			for (String string : keyLst) {
+				System.out.println("keyName:" + string);
+			}
+		} finally {
+			cosClient.shutDown();
 		}
-		
+
 	}
 
+	@Override
+	public void shutDown() {
+		if (null != this._cosClient) {
+			this._cosClient.shutdown();
+		}
+
+	}
 
 }

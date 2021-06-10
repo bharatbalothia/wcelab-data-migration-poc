@@ -26,4 +26,6 @@ public interface COSClient {
 	
 	public void moveObject(String bucketName, String keyName, String toBucket, String toKeyName);
 
+	public void shutDown();
+
 }
