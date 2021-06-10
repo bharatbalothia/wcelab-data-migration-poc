@@ -31,6 +31,7 @@ public class COSAgent extends YCPBaseAgent {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List getJobs(YFSEnvironment env, Document criteriaDoc, Document lastMessage) {
 		logger.beginTimer("getJobs");
+		COSClient cosClient = new COSClientImpl();
 		try {
 			if (YFCLogUtil.isDebugEnabled()) {
 				logger.debug("getJobs Input:" + YFCDocument.getDocumentFor(criteriaDoc).getString());
@@ -40,7 +41,7 @@ public class COSAgent extends YCPBaseAgent {
 			 * if (null != lastMessage) { logger.info("Last Message:" +
 			 * YFCDocument.getDocumentFor(lastMessage).getString()); return jobList; }
 			 */
-			COSClient cosClient = new COSClientImpl();
+			
 
 			YFCDocument critDoc = YFCDocument.getDocumentFor(criteriaDoc);
 
@@ -74,6 +75,7 @@ public class COSAgent extends YCPBaseAgent {
 			logger.info("Number of Jobs:" + jobList.size());
 			return jobList;
 		} finally {
+			cosClient.shutDown();
 			logger.endTimer("getJobs");
 		}
 
@@ -85,8 +87,9 @@ public class COSAgent extends YCPBaseAgent {
 		if (YFCLogUtil.isDebugEnabled()) {
 			logger.debug("Input message:" + YFCDocument.getDocumentFor(inDoc).getString());
 		}
+		COSClient cosClient = new COSClientImpl();
 		try {
-			COSClient cosClient = new COSClientImpl();
+			
 			YFCDocument objDoc = YFCDocument.getDocumentFor(inDoc);
 
 			YFCElement rootEl = objDoc.getDocumentElement();
@@ -120,6 +123,7 @@ public class COSAgent extends YCPBaseAgent {
 			logger.info("Moved to " + processedBucketName + " Successfully..");
 
 		} finally {
+			cosClient.shutDown();
 			logger.endTimer("executeJob");
 		}
 	}

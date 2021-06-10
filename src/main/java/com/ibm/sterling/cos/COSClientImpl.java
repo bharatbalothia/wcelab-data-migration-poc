@@ -154,11 +154,10 @@ public class COSClientImpl implements COSClient {
 		ClientConfiguration clientConfig = new ClientConfiguration().withRequestTimeout(5000);
 		clientConfig.setUseTcpKeepAlive(true);
 
-		AmazonS3 cosClient = AmazonS3ClientBuilder.standard()
-				.withCredentials(new AWSStaticCredentialsProvider(credentials))
+		return AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
 				.withEndpointConfiguration(new EndpointConfiguration(this.getEndpointURL(), this.getLocation()))
 				.withPathStyleAccessEnabled(true).withClientConfiguration(clientConfig).build();
-		return cosClient;
+
 	}
 
 	public void copyObject(String fromBucket, String keyName, String toBucket, String toKeyName) {
